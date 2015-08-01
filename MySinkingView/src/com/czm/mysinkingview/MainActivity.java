@@ -32,34 +32,15 @@ public class MainActivity extends Activity {
             }
         });
 
-        percent = 0.56f;
-        mSinkingView.setPercent(percent);
+        
+        mSinkingView.setPercent(0.00f);
+//        mSinkingView.clear();
     }
 
 
     private void test() {
-        Thread thread = new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-
-                percent = 0;
-                while (percent <= 1) {
-                    mSinkingView.setPercent(percent);
-                    percent += 0.01f;
-                    try {
-                        Thread.sleep(40);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-                percent = 0.56f;
-                mSinkingView.setPercent(percent);
-                // mSinkingView.clear();
-            }
-        });
-        thread.start();
+    	 mSinkingView.setPercent(0.8f);
+//       
     }
 
 }
