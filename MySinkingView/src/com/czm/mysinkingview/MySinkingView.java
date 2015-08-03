@@ -123,7 +123,6 @@ public class MySinkingView extends FrameLayout {
 		canvas.clipPath(path);
 		path.addCircle(width / 2, height / 2, width / 2, Direction.CCW);
 		canvas.clipPath(path, Op.REPLACE);
-		canvas.drawCircle(width / 2, height / 2, width / 2 - 2, mPaint);
 		if (mFlag == Status.RUNNING) {
 			if (mScaledBitmap == null) {
 				mBitmap = BitmapFactory.decodeResource(getContext()
