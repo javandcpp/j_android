@@ -121,6 +121,9 @@ public class MySinkingView extends FrameLayout {
 		canvas.save();
 		path.reset();
 		canvas.clipPath(path);
+		
+		
+		
 		path.addCircle(width / 2, height / 2, width / 2, Direction.CCW);
 		canvas.clipPath(path, Op.REPLACE);
 		if (mFlag == Status.RUNNING) {
