@@ -7,6 +7,7 @@ import android.os.Looper;
 import android.os.Message;
 
 import com.guagua.mp3recorder.util.LameUtil;
+import com.guagua.mp3recorder.util.LogUtil;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,8 +16,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class DataEncodeThread extends HandlerThread implements AudioRecord.OnRecordPositionUpdateListener {
+	private TimerTask mTask;
+	private Timer mTimer;
+	private File mDestFile;
 	private StopHandler mHandler;
 	private static final int PROCESS_STOP = 1;
 	private byte[] mMp3Buffer;
@@ -50,8 +56,11 @@ public class DataEncodeThread extends HandlerThread implements AudioRecord.OnRec
 	 * @param bufferSize bufferSize
 	 * @throws FileNotFoundException file not found
 	 */
-	public DataEncodeThread(File file, int bufferSize) throws FileNotFoundException {
+	public DataEncodeThread(Timer timer, TimerTask timerTask, File file, int bufferSize) throws FileNotFoundException {
 		super("DataEncodeThread");
+		this.mTimer=timer;
+		this.mTask=timerTask;
+		this.mDestFile=file;
 		this.mFileOutputStream = new FileOutputStream(file);
 		mMp3Buffer = new byte[(int) (7200 + (bufferSize * 2 * 1.25))];
 	}
@@ -59,6 +68,7 @@ public class DataEncodeThread extends HandlerThread implements AudioRecord.OnRec
 	@Override
 	public synchronized void start() {
 		super.start();
+		mTimer.scheduleAtFixedRate(mTask, 0, 1000);
 		mHandler = new StopHandler(getLooper(), this);
 	}
 
@@ -69,6 +79,9 @@ public class DataEncodeThread extends HandlerThread implements AudioRecord.OnRec
 	}
 
 	public void sendStopMessage() {
+		if (null!=mTask){
+			mTask.cancel();
+		}
 		check();
 		mHandler.sendEmptyMessage(PROCESS_STOP);
 	}
@@ -97,6 +110,7 @@ public class DataEncodeThread extends HandlerThread implements AudioRecord.OnRec
 			short[] buffer = task.getData();
 			int readSize = task.getReadSize();
 			int encodedSize = LameUtil.encode(buffer, buffer, readSize, mMp3Buffer);
+			LogUtil.LOG_D("recorder","encodedSize:"+encodedSize);
 			if (encodedSize > 0){
 				try {
 					mFileOutputStream.write(mMp3Buffer, 0, encodedSize);
@@ -128,7 +142,8 @@ public class DataEncodeThread extends HandlerThread implements AudioRecord.OnRec
 						e.printStackTrace();
 					}
 				}
-				LameUtil.close();
+				LameUtil.closeWithFile(mDestFile.getName());
+//				LameUtil.close();
 			}
 		}
 	}

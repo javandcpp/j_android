@@ -1,0 +1,54 @@
+apply plugin: 'com.android.library'
+apply plugin: 'idea'
+apply plugin: 'bintray-release'
+android {
+    compileSdkVersion 23
+    buildToolsVersion '23.0.2'
+
+    defaultConfig {
+        minSdkVersion 9
+        targetSdkVersion 22
+        versionCode 19
+        versionName '2.6.3'
+    }
+
+    task makeJar(type: Copy) {
+        //删除存在的
+        delete 'build/libs/libvideocache.jar'
+        //设置拷贝的文件
+        from('build/intermediates/bundles/release/')
+        //打进jar包后的文件目录
+        into('build/libs/')
+        //将classes.jar放入build/libs/目录下
+        //include ,exclude参数来设置过滤
+        //（我们只关心classes.jar这个文件）
+        include('classes.jar')
+        //重命名
+        rename ('classes.jar', 'libvideocache.jar')
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_7
+        targetCompatibility JavaVersion.VERSION_1_7
+    }
+}
+
+idea {
+    module {
+        downloadJavadoc = true
+        downloadSources = true
+    }
+}
+
+dependencies {
+    compile 'org.slf4j:slf4j-android:1.7.21'
+}
+
+publish {
+    userOrg = 'alexeydanilov'
+    groupId = 'com.danikula'
+    artifactId = 'videocache'
+    publishVersion = '2.6.3'
+    description = 'Cache support for android VideoView'
+    website = 'https://github.com/danikula/AndroidVideoCache'
+}

@@ -39,6 +39,14 @@ JNIEXPORT jint JNICALL Java_com_guagua_mp3recorder_util_LameUtil_flush
 JNIEXPORT void JNICALL Java_com_guagua_mp3recorder_util_LameUtil_close
   (JNIEnv *, jclass);
 
+/*
+ * Class:     com_guagua_mp3recorder_util_LameUtil
+ * Method:    close
+ * Signature: (Ljava/lang/String;)V
+ */
+JNIEXPORT void JNICALL Java_com_guagua_mp3recorder_util_LameUtil_closeWithFile
+  (JNIEnv *, jclass, jstring);
+
 #ifdef __cplusplus
 }
 #endif

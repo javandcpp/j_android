@@ -1,6 +1,7 @@
 #include "lame_3.99.5_libmp3lame/lame.h"
 #include "com_guagua_mp3recorder_util_LameUtil.h"
 #include <stdio.h>
+#include <android/log.h>
 #include <jni.h>
 
 static lame_global_flags *lame = NULL;
@@ -56,4 +57,22 @@ JNIEXPORT void JNICALL Java_com_guagua_mp3recorder_util_LameUtil_close
 (JNIEnv *env, jclass cls) {
 	lame_close(lame);
 	lame = NULL;
+
+	 jclass clazz = (*env)->FindClass(env,"com/guagua/mp3recorder/util/LameUtil");
+	if(0!=clazz){
+        jmethodID method= (*env)->GetStaticMethodID(env,clazz,"lameWriteCloseCallback","(Z)V");
+        jboolean result=1;
+        (*env)->CallStaticVoidMethod(env,cls, method,result);
+     }
 }
+
+JNIEXPORT void JNICALL Java_com_guagua_mp3recorder_util_LameUtil_closeWithFile
+(JNIEnv *env, jclass cls, jstring jstr){
+   jclass clazz = (*env)->FindClass(env,"com/guagua/mp3recorder/util/LameUtil");
+  	if(0!=clazz){
+          jmethodID method= (*env)->GetStaticMethodID(env,clazz,"lameWriteCloseCallback","(Ljava/lang/String;)V");
+          jboolean result=1;
+          jstring jstr1=jstr;
+          (*env)->CallStaticVoidMethod(env,cls, method,jstr1);
+       }
+  }

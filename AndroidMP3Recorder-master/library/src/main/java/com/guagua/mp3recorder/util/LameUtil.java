@@ -1,6 +1,11 @@
 package com.guagua.mp3recorder.util;
 
+import android.util.Log;
+
 public class LameUtil {
+	private static LameWriteFinishCall mLameWriteCallBack;
+	private static boolean sDebug=true;
+
 	static{
 		System.loadLibrary("mp3lame");
 	}
@@ -71,4 +76,42 @@ public class LameUtil {
 	 * Close LAME.
 	 */
 	public native static void close();
+
+	public native static void closeWithFile(String fileName);
+
+	/**
+	 * debug switch
+	 * @param debug
+     */
+	public static void setDebug(boolean debug){
+		sDebug=debug;
+	}
+	public static boolean getDebug(){
+		return sDebug;
+	}
+	/**
+	 * lame close callback
+	 */
+	public static void lameWriteCloseCallback(boolean finish){
+		Log.d("recorder",finish+"");
+		if (null!=mLameWriteCallBack){
+			mLameWriteCallBack.lameWriteCallBack(finish);
+		}
+	}
+	public static void lameWriteCloseCallback(String fileName){
+		Log.d("recorder",fileName+"");
+		if (null!=mLameWriteCallBack){
+			mLameWriteCallBack.lameWriteCallBack(fileName);
+		}
+	}
+
+	public interface LameWriteFinishCall{
+		void lameWriteCallBack(String fileName);
+		void lameWriteCallBack(boolean status);
+	}
+
+	public static void setLameCallback(LameWriteFinishCall lameWriteFinishCall){
+		mLameWriteCallBack=lameWriteFinishCall;
+	}
+
 }
